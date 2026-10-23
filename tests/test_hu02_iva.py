@@ -11,3 +11,6 @@ def test_iva_del_producto_corresponde_a_su_tarifa(tarifa, esperado):
     assert calcular_iva([linea]) == esperado
 
 
+def test_iva_se_calcula_sobre_el_valor_con_descuento():
+    linea = LineaCarrito(Producto("X", "Prod", 100_000, 19), 1)
+    assert calcular_iva([linea], porcentaje_descuento=10) == 17_100
