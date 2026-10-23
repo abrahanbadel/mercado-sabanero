@@ -28,3 +28,7 @@ class Producto:
 class LineaCarrito:
     producto: Producto
     cantidad: int
+
+    @property
+    def valor(self) -> int:
+        return self.producto.precio * self.cantidad
