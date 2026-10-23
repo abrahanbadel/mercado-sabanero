@@ -24,3 +24,7 @@ class Producto:
         if self.tarifa_iva not in TARIFAS_IVA:
             raise ProductoInvalidoError("La tarifa de IVA debe ser 0, 5 o 19")
 
+@dataclass(frozen=True)
+class LineaCarrito:
+    producto: Producto
+    cantidad: int
