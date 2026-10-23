@@ -26,5 +26,7 @@ def test_total_es_subtotal_menos_descuento_mas_iva_mas_envio(inventario, cafe):
     res = liquidar(carrito, "Sincelejo")
     assert res.total == res.subtotal - res.descuento + res.iva + res.envio == 39_500
 
-
-
+def test_total_es_subtotal_menos_descuento_mas_iva_mas_envio(inventario, cafe):
+    carrito = carrito_con(inventario, cafe, 2)  # 30.000; IVA 1.500; envío 8.000
+    res = liquidar(carrito, "Sincelejo")
+    assert res.total == res.subtotal - res.descuento + res.iva + res.envio == 39_500
