@@ -5,6 +5,8 @@ import pytest
 from mercado_sabanero.cupones import Cupon, validar_cupon
 from mercado_sabanero.errores import CuponInvalidoError
 from mercado_sabanero.cupones import validar_cupon
+from mercado_sabanero.liquidacion import liquidar
+from tests.conftest import carrito_con
 
 
 def test_sabanero10_con_subtotal_minimo_da_diez_por_ciento():
@@ -32,3 +34,16 @@ def test_cupon_vencido_lanza_error_de_cupon_invalido():
 
 def test_codigo_de_cupon_no_distingue_mayusculas():
       assert validar_cupon("sabanero10", 50_000).codigo == "SABANERO10"
+
+def test_cupon_con_descuento_por_volumen_aplica_solo_el_mayor(inventario, licuadora):
+      # subtotal 540.000 -> volumen 10 %; SABANERO10 = 10 %: no se suman (54.000)
+      carrito = carrito_con(inventario, licuadora, 3)
+      res = liquidar(carrito, "Sincelejo", codigo_cupon="SABANERO10")
+      assert res.descuento == 54_000
+
+
+def test_cupon_mayor_que_el_volumen_prevalece(inventario, licuadora):
+      # subtotal 180.000: volumen 0 %, cupón 10 % -> 18.000
+      carrito = carrito_con(inventario, licuadora, 1)
+      res = liquidar(carrito, "Sincelejo", codigo_cupon="sabanero10")
+      assert res.descuento == 18_000
