@@ -32,3 +32,12 @@ class LineaCarrito:
     @property
     def valor(self) -> int:
         return self.producto.precio * self.cantidad
+
+@dataclass(frozen=True)
+class Liquidacion:
+      subtotal: int
+      descuento: int
+      iva: int
+      envio: int
+      total: int
+      puntos: int
