@@ -10,6 +10,14 @@ from .puntos import calcular_puntos
 from .redondeo import redondear_peso
 
 
+def _aplicar_cupon(codigo_cupon, subtotal, pct_volumen, hoy):
+    """Devuelve (porcentaje, envio_gratis). Los descuentos no se suman: aplica el mayor."""
+    if not codigo_cupon:
+        return pct_volumen, False
+    cupon = validar_cupon(codigo_cupon, subtotal, hoy)
+    return max(pct_volumen, cupon.porcentaje), cupon.envio_gratis
+
+
 def liquidar(carrito, municipio, categoria=Categoria.ESTANDAR,
              codigo_cupon=None, hoy=None) -> Liquidacion:
     lineas = carrito.lineas()
@@ -17,12 +25,9 @@ def liquidar(carrito, municipio, categoria=Categoria.ESTANDAR,
         raise CarritoVacioError("El carrito está vacío")
 
     subtotal = sum(l.valor for l in lineas)
-    pct = porcentaje_descuento_volumen(subtotal)
-    envio_gratis = False
-    if codigo_cupon:
-        cupon = validar_cupon(codigo_cupon, subtotal, hoy)
-        pct = max(pct, cupon.porcentaje)  # no se suman: aplica el mayor
-        envio_gratis = cupon.envio_gratis
+    pct, envio_gratis = _aplicar_cupon(
+        codigo_cupon, subtotal, porcentaje_descuento_volumen(subtotal), hoy
+    )
 
     descuento = redondear_peso(subtotal * Fraction(pct, 100))
     iva = calcular_iva(lineas, pct)
