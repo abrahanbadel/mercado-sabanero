@@ -1,3 +1,6 @@
+import pytest
+
+from mercado_sabanero.errores import CarritoVacioError
 from mercado_sabanero.liquidacion import liquidar
 from mercado_sabanero.modelos import Categoria
 
@@ -15,3 +18,7 @@ def test_ejemplo_del_enunciado(carrito, licuadora, cafe, arroz):
 def test_puntos_no_incluyen_el_envio(carrito, cafe):
       carrito.agregar(cafe, 2)  # total 39.500 con envío 8.000 -> puntos sobre 31.500
       assert liquidar(carrito, "Sincelejo").puntos == 31
+
+def test_liquidar_carrito_vacio_lanza_error(carrito):
+      with pytest.raises(CarritoVacioError):
+          liquidar(carrito, "Sincelejo")
